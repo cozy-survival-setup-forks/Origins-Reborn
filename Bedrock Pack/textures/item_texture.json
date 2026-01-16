@@ -1,0 +1,11 @@
+{
+  "resource_pack_name": "OriginsPack",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "orb_of_origin": {
+      "textures": [
+        "textures/items/orb_of_origin"
+      ]
+    }
+  }
+}

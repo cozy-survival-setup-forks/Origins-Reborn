@@ -1,0 +1,58 @@
+name: Origins-Reborn
+version: ${version}
+main: com.starshootercity.OriginsReborn
+description: Paper Origins plugin inspired by Apace's Origins mod
+api-version: '1.18'
+author: cometcake575
+
+softdepend:
+  - Geyser-Spigot
+  - AuthMe
+  - PlaceholderAPI
+  - ViaVersion
+  - Skript
+  - WorldEdit
+  - WorldGuard
+  - SkinsRestorer
+  - GSit
+
+permissions:
+  originsreborn.default:
+    default: true
+    description: Default permissions for Origins-Reborn
+  originsreborn.exchange:
+    default: op
+    description: Use /origin exchange to swap origins with another player
+  originsreborn.costbypass:
+    default: false
+    description: Bypass cost of origin swapping
+  originsreborn.admin:
+    default: op
+    description: Use admin commands for Origins-Reborn
+    children:
+      - originsreborn.flight
+      - originsreborn.exchange
+  originsreborn.flight:
+    default: op
+    description: Use /fly
+  originsreborn.invsee.view:
+    default: op
+    description: View other players' Shulker inventory
+  originsreborn.invsee.modify:
+    default: op
+    description: View other players' Shulker inventory
+    children:
+      - originsreborn.invsee.view
+
+commands:
+  origin:
+    permission: originsreborn.default
+    description: Modify origins
+    usage: /<command>
+  fly:
+    permission: originsreborn.flight
+    description: Toggle flight
+    usage: /<command>
+  origindiscord:
+    description: Gives a link to the Origins-Reborn discord for help
+    usage: /<command>

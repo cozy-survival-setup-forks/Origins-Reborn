@@ -1,0 +1,12 @@
+{
+	"format_version": "1.14.0",
+	"sound_definitions": {
+		"entity.wolf.howl": {
+			"category": "player",
+			"sounds": [
+				"sounds/mob/wolf/howl1",
+				"sounds/mob/wolf/howl2"
+			]
+		}
+	}
+}

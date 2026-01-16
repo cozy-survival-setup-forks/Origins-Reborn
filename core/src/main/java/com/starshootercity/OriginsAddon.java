@@ -1,0 +1,94 @@
+package com.starshootercity;
+
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.version.ResourcePackInfo;
+import com.starshootercity.util.AbilityRegister;
+import net.kyori.adventure.key.Key;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * This is the class you should extend to make an Origins-Reborn addon.
+ * <br><br>
+ * This should be your main class in plugin.yml, OriginsAddon extends JavaPlugin.
+ */
+@APITarget
+public abstract class OriginsAddon extends JavaPlugin {
+
+    public @Nullable SwapStateGetter shouldOpenSwapMenu() {
+        return null;
+    }
+
+    public @Nullable SwapStateGetter shouldAllowOriginSwapCommand() {
+        return null;
+    }
+
+    public @Nullable KeyStateGetter getAbilityOverride() {
+        return null;
+    }
+
+    public interface SwapStateGetter {
+        State get(Player player, PlayerSwapOriginEvent.SwapReason reason);
+    }
+
+    public interface KeyStateGetter {
+        State get(Player player, Key key);
+    }
+
+    @SuppressWarnings("unused")
+    public enum State {
+        ALLOW,
+        DEFAULT,
+        DENY
+    }
+
+    @Override
+    public final void onEnable() {
+        onRegister();
+        AddonLoader.register(this);
+
+        for (Ability ability : getRegisteredAbilities()) {
+            AbilityRegister.registerAbility(ability, ability.getKey(),this);
+        }
+
+        if (getResourcePackInfo() != null) PackApplier.addResourcePack(this, getResourcePackInfo());
+        afterRegister();
+    }
+
+    public @Nullable ResourcePackInfo getResourcePackInfo() {
+        return null;
+    }
+
+    @Override
+    public @NotNull File getFile() {
+        return super.getFile();
+    }
+
+    /**
+     * Runs at the start of onEnable, before addon configuration
+     * <br><br>
+     * This should be used instead of onEnable in your addon
+     */
+    public void onRegister() {}
+
+    /**
+     * Runs at the end of onEnable, after addon configuration
+     */
+    public void afterRegister() {}
+
+    public abstract @NotNull String getNamespace();
+
+    /**
+     * Used to return a list of abilities the plugin should register
+     * @return List of abilities the plugin will register
+     */
+    public @NotNull List<Ability> getRegisteredAbilities() {
+        return List.of();
+    }
+}

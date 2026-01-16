@@ -1,0 +1,55 @@
+name: Origins-Reborn
+version: ${version}
+main: com.starshootercity.OriginsReborn
+description: Paper Origins plugin inspired by Apace's Origins mod
+api-version: '1.19'
+bootstrapper: com.starshootercity.OriginsBootstrap
+authors:
+  - cometcake575
+
+permissions:
+  originsreborn.default:
+    default: true
+    description: Default permissions for Origins-Reborn
+  originsreborn.exchange:
+    default: op
+    description: Use /origin exchange to swap origins with another player
+  originsreborn.costbypass:
+    default: false
+    description: Bypass cost of origin swapping
+  originsreborn.admin:
+    default: op
+    description: Use admin commands for Origins-Reborn
+    children:
+      - originsreborn.flight
+      - originsreborn.exchange
+  originsreborn.flight:
+    default: op
+    description: Use /fly
+
+dependencies:
+  server:
+    Geyser-Spigot:
+      load: BEFORE
+      required: false
+    AuthMe:
+      load: BEFORE
+      required: false
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+    ViaVersion:
+      load: BEFORE
+      required: false
+    Skript:
+      load: BEFORE
+      required: false
+    WorldEdit:
+      load: BEFORE
+      required: false
+    WorldGuard:
+      load: BEFORE
+      required: false
+    SkinsRestorer:
+      load: BEFORE
+      required: false

@@ -1,0 +1,5 @@
+# Alias abilities use the same code as the originals, but can be configured and translated separately
+# This means you can make modified versions of abilities without changing the original
+# This example creates an alias of the ability 'origins:example', with the key 'origins:example_alias'
+origins:example:
+  - origins:example_alias

@@ -1,0 +1,6 @@
+id: originsreborn
+name: Origins-Reborn
+main: com.starshootercity.geysermc.ORExtension
+api: 2.7.0
+version: ${version}
+authors: [cometcake575]

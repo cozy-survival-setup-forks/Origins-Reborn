@@ -1,0 +1,103 @@
+package com.starshootercity.abilities;
+
+import com.destroystokyo.paper.event.server.ServerTickEndEvent;
+import com.starshootercity.OriginsReborn;
+import com.starshootercity.SavedPotionEffect;
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.util.ShortcutUtils;
+import net.kyori.adventure.key.Key;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CatVision implements Listener, VisibleAbility {
+    Map<Player, SavedPotionEffect> storedEffects = new HashMap<>();
+
+    @EventHandler
+    public void onEntityPotionEffect(EntityPotionEffectEvent event) {
+        runForAbility(event.getEntity(), player -> {
+            if (event.getModifiedType().equals(PotionEffectType.NIGHT_VISION)) {
+                PotionEffect effect = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
+                if (effect == null) return;
+                if (!ShortcutUtils.isInfinite(effect)) return;
+                if (event.getNewEffect() == null) return;
+                storedEffects.put(player, new SavedPotionEffect(event.getNewEffect(), Bukkit.getCurrentTick()));
+            }
+        });
+    }
+
+    @EventHandler
+    public void onServerTickEnd(ServerTickEndEvent event) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            runForAbility(p, player -> {
+                if (!OriginsReborn.getMVE().isUnderWater(player)) {
+                    PotionEffect effect = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
+                    boolean ambient = false;
+                    boolean showParticles = false;
+                    if (effect != null) {
+                        ambient = effect.isAmbient();
+                        showParticles = effect.hasParticles();
+                        if (!ShortcutUtils.isInfinite(effect)) {
+                            storedEffects.put(player, new SavedPotionEffect(effect, Bukkit.getCurrentTick()));
+                            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                        } else return;
+                    }
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, ShortcutUtils.infiniteDuration(), -1, ambient, showParticles));
+                } else {
+                    if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
+                        PotionEffect effect = player.getPotionEffect(PotionEffectType.NIGHT_VISION);
+                        if (effect != null) {
+                            if (ShortcutUtils.isInfinite(effect)) player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                        }
+                    }
+                    if (storedEffects.containsKey(player)) {
+                        SavedPotionEffect effect = storedEffects.get(player);
+                        storedEffects.remove(player);
+                        PotionEffect potionEffect = effect.effect();
+                        int time = potionEffect.getDuration() - (Bukkit.getCurrentTick() - effect.currentTime());
+                        if (time > 0) {
+                            player.addPotionEffect(new PotionEffect(
+                                    potionEffect.getType(),
+                                    time,
+                                    potionEffect.getAmplifier(),
+                                    potionEffect.isAmbient(),
+                                    potionEffect.hasParticles()
+                            ));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    @EventHandler
+    public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
+        if (event.getItem().getType() == Material.MILK_BUCKET) {
+            storedEffects.remove(event.getPlayer());
+        }
+    }
+    @Override
+    public @NotNull Key getKey() {
+        return Key.key("origins:cat_vision");
+    }
+
+    @Override
+    public String description() {
+        return "You can slightly see in the dark when not in water.";
+    }
+
+    @Override
+    public String title() {
+        return "Nocturnal";
+    }
+}

@@ -1,0 +1,43 @@
+package com.starshootercity.abilities;
+
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.util.config.ConfigManager;
+import net.kyori.adventure.key.Key;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+
+public class BurningWrath implements Listener, VisibleAbility {
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        runForAbility(event.getDamager(), player -> {
+            if (player.getFireTicks() > 0) event.setDamage(event.getDamage() + damageIncrease);
+        });
+    }
+
+    @Override
+    public @NotNull Key getKey() {
+        return Key.key("origins:burning_wrath");
+    }
+
+    @Override
+    public String description() {
+        return "When on fire, you deal additional damage with your attacks.";
+    }
+
+    @Override
+    public String title() {
+        return "Burning Wrath";
+    }
+
+    private int damageIncrease;
+
+    @Override
+    public void initialize(JavaPlugin plugin) {
+        damageIncrease = registerConfigOption(plugin, "damage_increase", Collections.singletonList("How much to increase damage dealt when on fire"), ConfigManager.SettingType.INTEGER, 3);
+    }
+}

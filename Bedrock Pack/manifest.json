@@ -1,0 +1,18 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "Origins-Reborn Bedrock Resource Pack",
+        "name": "OriginsPack",
+        "uuid": "0595309d-9a61-4e94-9b9a-7fb8a4967e8f",
+        "version": [1, 0, 5],
+        "min_engine_version": [ 1, 16, 0 ]
+    },
+    "modules": [
+        {
+            "description": "Origins-Reborn Bedrock Resource Pack",
+            "type": "resources",
+            "uuid": "eb993d2d-4314-4824-9a97-4ee3e544d892",
+            "version": [1, 0, 0]
+        }
+    ]
+}
