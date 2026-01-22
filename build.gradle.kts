@@ -55,7 +55,7 @@ dependencies {
     // Dependencies
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     implementation("xyz.jpenilla:reflection-remapper:0.1.1")
-    implementation(files("core/libs/json-20250517.jar"))
+    implementation("org.json:json:20250517")
     implementation("net.objecthunter:exp4j:0.4.8")
     implementation("org.eclipse.jetty:jetty-server:11.0.7")
     implementation("org.eclipse.jetty:jetty-servlet:11.0.7")
