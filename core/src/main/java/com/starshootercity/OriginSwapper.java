@@ -414,6 +414,19 @@ public class OriginSwapper implements Listener {
     public static Map<Player, Long> orbCooldown = new HashMap<>();
 
     public static void resetPlayer(Player player, boolean full) {
+
+        if (!Bukkit.isPrimaryThread()) {
+
+            Bukkit.getLogger().severe("Origins-Reborn detected an attempt to reset a player on a non-primary thread! Report this and the thread dump below to the Plugin Authors.");
+            Thread.dumpStack();
+
+            Bukkit.getScheduler().runTask(OriginsReborn.getInstance(), () -> { // Safely handles the reset.
+                resetPlayer(player, full);
+            });
+
+            return;
+        }
+
         resetAttributes(player);
         player.closeInventory();
         OriginsReborn.getMVE().setWorldBorderOverlay(player, false);
@@ -684,7 +697,15 @@ public class OriginSwapper implements Listener {
     }
 
     public static @Nullable Origin getOrigin(Player player, String layer) {
-        if (!origins.containsKey(player.getUniqueId())) loadOrigins(player);
+
+        if (!origins.containsKey(player.getUniqueId())) {
+
+            if (!Bukkit.isPrimaryThread()) {
+                return null;
+            }
+
+            loadOrigins(player);
+        }
         return origins.get(player.getUniqueId()).get(layer);
     }
 

@@ -118,7 +118,14 @@ public interface Ability {
         }
 
         List<Origin> origins = OriginSwapper.getOrigins(player);
-        boolean hasAbility = origins.stream().anyMatch(origin -> origin.hasAbility(this));
+
+        boolean hasAbility = false;
+        for (Origin origin : origins) {
+            if (origin.hasAbility(this)) {
+                hasAbility = true;
+                break;
+            }
+        }
 
         if (abilityMap.get(getRegisteredKey()) instanceof DependantAbility dependantAbility) {
             return hasAbility && ((dependantAbility.getDependencyType() == DependantAbility.DependencyType.REGULAR) == dependantAbility.getDependency().isEnabled(player));
