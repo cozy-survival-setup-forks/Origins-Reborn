@@ -698,7 +698,7 @@ public class OriginSwapper implements Listener {
         applyAttributeChanges(event.getPlayer());
     }
 
-    public PlayerSwapOriginEvent.SwapReason getReason(ItemStack icon) {
+    public static PlayerSwapOriginEvent.SwapReason getReason(ItemStack icon) {
         return PlayerSwapOriginEvent.SwapReason.get(icon.getItemMeta().getPersistentDataContainer().get(swapTypeKey, PersistentDataType.STRING));
     }
 
