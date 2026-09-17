@@ -33,7 +33,9 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6") // Earliest with 1.18 support.
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.20") // Earliest with 1.18 support.
     compileOnly("net.skinsrestorer:skinsrestorer-api:15.6.3")
-    compileOnly(files("libs/gsit.jar"))
+    compileOnly("com.github.Gecolay:GSit:3.5.1") {
+        isTransitive = false
+    }
     compileOnly("com.github.SkriptLang:Skript:2.9.1")
 
     // PAPI
