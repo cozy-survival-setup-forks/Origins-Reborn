@@ -53,3 +53,6 @@ dependencies:
     SkinsRestorer:
       load: BEFORE
       required: false
+    GSit:
+      load: BEFORE
+      required: false
