@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.starshootercity"
-version = "2.10.9"
+version = "2.10.10-cozy.1"
 
 repositories {
     mavenCentral()
@@ -29,28 +29,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":version"))
     implementation(project(":folia"))
-    implementation(project(":1.18.1", "reobf"))
-    implementation(project(":1.18.2", "reobf"))
-    implementation(project(":1.19", "reobf"))
-    implementation(project(":1.19.1", "reobf"))
-    implementation(project(":1.19.2", "reobf"))
-    implementation(project(":1.19.3", "reobf"))
-    implementation(project(":1.19.4", "reobf"))
-    implementation(project(":1.20", "reobf"))
-    implementation(project(":1.20.1", "reobf"))
-    implementation(project(":1.20.2", "reobf"))
-    implementation(project(":1.20.3", "reobf"))
-    implementation(project(":1.20.4", "reobf"))
-    implementation(project(":1.20.6", "reobf"))
-    implementation(project(":1.21", "reobf"))
-    implementation(project(":1.21.1", "reobf"))
-    implementation(project(":1.21.3", "reobf"))
-    implementation(project(":1.21.4", "reobf"))
-    implementation(project(":1.21.5"))
-    implementation(project(":1.21.6"))
-    implementation(project(":1.21.7"))
-    implementation(project(":1.21.8"))
-    implementation(project(":1.21.9"))
+    implementation(project(":1.21.11"))
 
     // Dependencies
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
@@ -60,6 +39,11 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-server:11.0.7")
     implementation("org.eclipse.jetty:jetty-servlet:11.0.7")
     implementation("org.eclipse.jetty:jetty-webapp:11.0.7")
+    implementation("dev.triumphteam:triumph-gui-paper:3.1.13")
+}
+
+tasks.shadowJar {
+    relocate("dev.triumphteam.gui", "com.starshootercity.libraries.triumph.gui")
 }
 
 tasks {

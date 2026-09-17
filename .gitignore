@@ -1,4 +1,5 @@
 .gradle
+.paperweight/
 build/
 libs/
 !gradle/wrapper/gradle-wrapper.jar

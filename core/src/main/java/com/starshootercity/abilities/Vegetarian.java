@@ -4,9 +4,12 @@ import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -26,12 +29,23 @@ public class Vegetarian implements Listener, VisibleAbility {
                 event.setCancelled(true);
 
                 if (poison) {
-                    event.getItem().setAmount(event.getItem().getAmount() - 1);
+                    consumeItem(player, event.getHand());
                     player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 300, 1, false, true));
                 }
             }
         });
     }
+
+    private void consumeItem(Player player, EquipmentSlot hand) {
+        ItemStack held = hand == EquipmentSlot.OFF_HAND
+                ? player.getInventory().getItemInOffHand()
+                : player.getInventory().getItemInMainHand();
+        ItemStack remaining = held.clone();
+        remaining.setAmount(Math.max(0, held.getAmount() - 1));
+        if (hand == EquipmentSlot.OFF_HAND) player.getInventory().setItemInOffHand(remaining);
+        else player.getInventory().setItemInMainHand(remaining);
+    }
+
     @Override
     public String description() {
         return "You can't digest any meat.";

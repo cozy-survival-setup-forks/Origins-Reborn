@@ -15,6 +15,8 @@ import com.starshootercity.util.VaultHook;
 import com.starshootercity.util.config.ConfigManager;
 import com.starshootercity.version.MVAccessor;
 import com.starshootercity.version.MVAttribute;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -36,7 +38,6 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -160,9 +161,11 @@ public class OriginSwapper implements Listener {
             }
             Component prefix = applyFont(ShortcutUtils.getColored(ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_SCREEN_TITLE_PREFIX)), Key.key("minecraft:default"));
             Component suffix = applyFont(ShortcutUtils.getColored(ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_SCREEN_TITLE_SUFFIX)), Key.key("minecraft:default"));
-            Inventory swapperInventory = Bukkit.createInventory(null, 54,
-                    prefix.append(component).append(suffix)
-            );
+            Gui swapperInventory = Gui.gui()
+                    .title(prefix.append(component).append(suffix))
+                    .rows(6)
+                    .disableAllInteractions()
+                    .create();
             ItemMeta meta = icon.getItemMeta();
             meta.getPersistentDataContainer().set(originKey, PersistentDataType.STRING, name.toLowerCase());
             if (meta instanceof SkullMeta skullMeta) {
@@ -172,7 +175,7 @@ public class OriginSwapper implements Listener {
             meta.getPersistentDataContainer().set(swapTypeKey, PersistentDataType.STRING, reason.getReason());
             meta.getPersistentDataContainer().set(layerKey, PersistentDataType.STRING, layer);
             icon.setItemMeta(meta);
-            swapperInventory.setItem(1, icon);
+            swapperInventory.setItem(1, new GuiItem(icon));
             ItemStack confirm = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
             ItemStack invisibleConfirm = new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE);
             ItemMeta confirmMeta = confirm.getItemMeta();
@@ -245,8 +248,8 @@ public class OriginSwapper implements Listener {
 
             up.setItemMeta(upMeta);
             down.setItemMeta(downMeta);
-            swapperInventory.setItem(52, up);
-            swapperInventory.setItem(53, down);
+            swapperInventory.setItem(52, actionItem(up));
+            swapperInventory.setItem(53, actionItem(down));
 
 
             if (!displayOnly) {
@@ -277,25 +280,28 @@ public class OriginSwapper implements Listener {
                 left.setItemMeta(leftMeta);
                 right.setItemMeta(rightMeta);
 
-                swapperInventory.setItem(47, left);
-                swapperInventory.setItem(51, right);
+                swapperInventory.setItem(47, actionItem(left));
+                swapperInventory.setItem(51, actionItem(right));
             }
 
             confirm.setItemMeta(confirmMeta);
             invisibleConfirm.setItemMeta(invisibleConfirmMeta);
-            swapperInventory.setItem(48, confirm);
-            swapperInventory.setItem(49, invisibleConfirm);
-            swapperInventory.setItem(50, invisibleConfirm);
-            player.openInventory(swapperInventory);
+            swapperInventory.setItem(48, actionItem(confirm));
+            swapperInventory.setItem(49, actionItem(invisibleConfirm));
+            swapperInventory.setItem(50, actionItem(invisibleConfirm));
+            swapperInventory.open(player);
         }
+    }
+
+    private static GuiItem actionItem(ItemStack item) {
+        return new GuiItem(item, OriginSwapper::handleInventoryClick);
     }
 
     public static Component applyFont(Component component, Key font) {
         return OriginsReborn.getMVE().applyFont(component, font);
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
+    private static void handleInventoryClick(InventoryClickEvent event) {
         ItemStack item = ShortcutUtils.getTopInventory(event.getWhoClicked()).getItem(1);
         if (item != null) {
             if (item.getItemMeta() == null) return;

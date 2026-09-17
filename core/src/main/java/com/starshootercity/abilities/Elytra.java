@@ -8,6 +8,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -52,14 +53,15 @@ public class Elytra implements FlightAllowingAbility, Listener, VisibleAbility {
         return player.getFlySpeed();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
-        if (FlightToggleCommand.canFly(event.getPlayer())) return;
-        runForAbility(event.getPlayer(), player -> {
+        Player player = event.getPlayer();
+        if (FlightToggleCommand.canFly(player) || player.getScoreboardTags().contains("evervale_tempfly_active")) return;
+        runForAbility(player, abilityPlayer -> {
             if (event.isFlying()) {
                 event.setCancelled(true);
-                if (player.isGliding() && disableDisengage) return;
-                player.setGliding(!player.isGliding());
+                if (abilityPlayer.isGliding() && disableDisengage) return;
+                abilityPlayer.setGliding(!abilityPlayer.isGliding());
             }
         });
     }

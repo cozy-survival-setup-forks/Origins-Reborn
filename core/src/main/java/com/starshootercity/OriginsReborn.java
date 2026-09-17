@@ -16,6 +16,7 @@ import com.starshootercity.util.*;
 import com.starshootercity.util.config.ConfigManager;
 import com.starshootercity.util.hooks.GSitHook;
 import com.starshootercity.version.*;
+import dev.triumphteam.gui.TriumphGui;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.PluginCommand;
@@ -101,6 +102,7 @@ public class OriginsReborn extends OriginsAddon {
     @Override
     public void onRegister() {
         instance = this;
+        TriumphGui.init(this);
         if (Bukkit.getPluginManager().isPluginEnabled("Geyser-Spigot")) {
             OREventRegistrar.initialize(this);
         }

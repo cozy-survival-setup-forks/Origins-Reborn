@@ -27,51 +27,32 @@ dependencies {
     compileOnly("org.geysermc.geyser:api:2.7.0-SNAPSHOT")
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
     compileOnly("com.github.authme:authmereloaded:5.6.0-beta2")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6") // Earliest with 1.18 support.
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.20") // Earliest with 1.18 support.
     compileOnly("net.skinsrestorer:skinsrestorer-api:15.6.3")
     compileOnly(files("libs/gsit.jar"))
-    compileOnly("com.github.aromaa:WorldGuardExtraFlags:v4.2.4")
     compileOnly("com.github.SkriptLang:Skript:2.9.1")
 
     // PAPI
     compileOnly("me.clip:placeholderapi:2.11.5")
 
     // Server software
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
     // Plugin code
     compileOnly(project(":version"))
     compileOnly(project(":folia"))
-    compileOnly(project(":1.18.1"))
-    compileOnly(project(":1.18.2"))
-    compileOnly(project(":1.19"))
-    compileOnly(project(":1.19.1"))
-    compileOnly(project(":1.19.2"))
-    compileOnly(project(":1.19.3"))
-    compileOnly(project(":1.19.4"))
-    compileOnly(project(":1.20"))
-    compileOnly(project(":1.20.1"))
-    compileOnly(project(":1.20.2"))
-    compileOnly(project(":1.20.3"))
-    compileOnly(project(":1.20.4"))
-    compileOnly(project(":1.20.6"))
-    compileOnly(project(":1.21"))
-    compileOnly(project(":1.21.1"))
-    compileOnly(project(":1.21.3"))
-    compileOnly(project(":1.21.4"))
-    compileOnly(project(":1.21.5"))
-    compileOnly(project(":1.21.6"))
-    compileOnly(project(":1.21.7"))
-    compileOnly(project(":1.21.8"))
-    compileOnly(project(":1.21.9"))
+    compileOnly(project(":1.21.11"))
 
     compileOnly("org.json:json:20250517")
     compileOnly("net.objecthunter:exp4j:0.4.8")
     compileOnly("org.eclipse.jetty:jetty-server:11.0.7")
     compileOnly("org.eclipse.jetty:jetty-servlet:11.0.7")
     compileOnly("org.eclipse.jetty:jetty-webapp:11.0.7")
+    implementation("dev.triumphteam:triumph-gui-paper:3.1.13")
 }
 
 tasks {

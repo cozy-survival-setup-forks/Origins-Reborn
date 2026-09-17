@@ -14,6 +14,17 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT")
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    disableAutoTargetJvm()
+}
+
+tasks {
+    compileJava {
+        options.release.set(17)
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
 }
