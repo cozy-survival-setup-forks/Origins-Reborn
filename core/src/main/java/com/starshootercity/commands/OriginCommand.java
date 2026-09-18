@@ -112,15 +112,24 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         for (ExchangeRequest request : exchangeRequests.getOrDefault(player, List.of())) {
-                            if (request.expireTime > Bukkit.getCurrentTick()) continue;
-                            String l = request.layer.substring(0, 0).toUpperCase() + request.layer.substring(1);
+                            if (request.expireTime < Bukkit.getCurrentTick()) continue;
+                            String l = request.layer.substring(0, 1).toUpperCase() + request.layer.substring(1);
                             String layer = request.layer;
                             if (request.p2.equals(player) && request.p1.equals(target)) {
-                                target.sendMessage(Component.text("%s swapped with %s.".formatted(l, player.getName())).color(NamedTextColor.AQUA));
-                                player.sendMessage(Component.text("%s swapped with %s.".formatted(l, target.getName())).color(NamedTextColor.AQUA));
-
                                 Origin pOrigin = OriginSwapper.getOrigin(player, layer);
                                 Origin tOrigin = OriginSwapper.getOrigin(target, layer);
+
+                                if (tOrigin != null && (tOrigin.isUnchoosable(player) || tOrigin.hasPermission() && !player.hasPermission(tOrigin.getPermission()))) {
+                                    player.sendMessage(Component.text("You aren't allowed to have that origin.").color(NamedTextColor.RED));
+                                    return true;
+                                }
+                                if (pOrigin != null && (pOrigin.isUnchoosable(target) || pOrigin.hasPermission() && !target.hasPermission(pOrigin.getPermission()))) {
+                                    target.sendMessage(Component.text("You aren't allowed to have that origin.").color(NamedTextColor.RED));
+                                    return true;
+                                }
+
+                                target.sendMessage(Component.text("%s swapped with %s.".formatted(l, player.getName())).color(NamedTextColor.AQUA));
+                                player.sendMessage(Component.text("%s swapped with %s.".formatted(l, target.getName())).color(NamedTextColor.AQUA));
 
                                 OriginSwapper.setOrigin(player, tOrigin, PlayerSwapOriginEvent.SwapReason.COMMAND, false, layer);
                                 OriginSwapper.setOrigin(target, pOrigin, PlayerSwapOriginEvent.SwapReason.COMMAND, false, layer);
@@ -130,7 +139,7 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                         if (!exchangeRequests.containsKey(target)) {
                             exchangeRequests.put(target, new ArrayList<>());
                         }
-                        exchangeRequests.get(target).removeIf(request -> request.p1.equals(player) && request.p2.equals(player));
+                        exchangeRequests.get(target).removeIf(request -> request.p1.equals(player) && request.p2.equals(target));
                         String layer;
                         if (args.length != 3) layer = "origin";
                         else layer = args[2];
@@ -269,8 +278,16 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             case "export" -> {
+                if (sender instanceof Player player && !player.hasPermission("originsreborn.admin")) {
+                    sender.sendMessage(Component.text("You don't have permission to do this!").color(NamedTextColor.RED));
+                    return true;
+                }
                 if (args.length != 3) {
                     sender.sendMessage(Component.text("Invalid command. Usage: /origin export <addon id> <path>").color(NamedTextColor.RED));
+                    return true;
+                }
+                if (args[2].contains("..") || args[2].contains("/") || args[2].contains("\\")) {
+                    sender.sendMessage(Component.text("Invalid path.").color(NamedTextColor.RED));
                     return true;
                 }
                 File output = new File(OriginsReborn.getInstance().getDataFolder(), "export/" + args[2] + ".orbarch");
@@ -292,6 +309,10 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             case "import" -> {
+                if (sender instanceof Player player && !player.hasPermission("originsreborn.admin")) {
+                    sender.sendMessage(Component.text("You don't have permission to do this!").color(NamedTextColor.RED));
+                    return true;
+                }
                 if (args.length != 2) {
                     sender.sendMessage(Component.text("Invalid command. Usage: /origin import <path>").color(NamedTextColor.RED));
                     return true;
