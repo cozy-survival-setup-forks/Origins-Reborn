@@ -123,14 +123,13 @@ public class OrbOfOrigin implements Listener {
                         return;
                     }
                 }
-                ItemMeta heldMeta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-                EquipmentSlot hand = EquipmentSlot.OFF_HAND;
-                if (heldMeta != null && heldMeta.getPersistentDataContainer().has(orbKey, OriginSwapper.BooleanPDT.BOOLEAN)) hand = EquipmentSlot.HAND;
+                EquipmentSlot hand = event.getHand() == null ? EquipmentSlot.HAND : event.getHand();
                 if (hand == EquipmentSlot.HAND) event.getPlayer().swingMainHand();
                 else event.getPlayer().swingOffHand();
                 if (ConfigManager.getConfigValue(ConfigManager.Option.ORB_OF_ORIGIN_CONSUME)) {
                     item.setAmount(item.getAmount() - 1);
-                    event.getPlayer().getInventory().setItemInMainHand(item);
+                    if (hand == EquipmentSlot.HAND) event.getPlayer().getInventory().setItemInMainHand(item);
+                    else event.getPlayer().getInventory().setItemInOffHand(item);
                 }
                 boolean opened = false;
                 for (String layer : AddonLoader.layers) {
