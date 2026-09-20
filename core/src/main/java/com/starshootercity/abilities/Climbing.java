@@ -68,6 +68,7 @@ public class Climbing implements FlightAllowingAbility, Listener, VisibleAbility
 
     @EventHandler
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+        if (com.starshootercity.util.FlightOwnership.ownedByOther(event.getPlayer())) return;
         if (!event.isFlying()) {
             Long time = event.getPlayer().getPersistentDataContainer().get(startedClimbingKey, PersistentDataType.LONG);
             if (time != null) {

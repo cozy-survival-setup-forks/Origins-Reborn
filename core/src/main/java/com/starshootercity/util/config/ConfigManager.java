@@ -56,6 +56,19 @@ public class ConfigManager {
 
         // Misc
         public static Option<Boolean> DISABLE_FLIGHT_STUFF;
+        public static Option<String> EXTERNAL_FLIGHT_TAG;
+        public static Option<String> ORIGINS_FLIGHT_TAG;
+
+        // Origin equipped animation
+        public static Option<Boolean> EQUIP_ANIMATION_ENABLED;
+        public static Option<Boolean> EQUIP_ANIMATION_ON_SWAP;
+        public static Option<String> EQUIP_ANIMATION_SUBTITLE;
+        public static Option<String> EQUIP_ANIMATION_DEFAULT_COLOR;
+        public static Option<Map<String, String>> EQUIP_ANIMATION_COLORS;
+
+        // First join
+        public static Option<String> FIRST_JOIN_COMMAND;
+        public static Option<Integer> FIRST_JOIN_DELAY;
 
         // Swap command
         public static Option<Boolean> SWAP_COMMAND_ENABLED;
@@ -146,6 +159,38 @@ public class ConfigManager {
             SLEEPING_RESETS_COOLDOWNS = new Option<>(SettingType.BOOLEAN, "cooldowns.sleeping-resets-cooldowns", "Sleeping will reset all the cooldowns", false);
 
             DISABLE_FLIGHT_STUFF = new Option<>(SettingType.BOOLEAN, "misc-settings.disable-flight-stuff", "Disable all flight-related features. This does not hide the abilities themselves, they must be removed from the .yml files in the ~/plugins/Origins-Reborn/origins/ folder", false);
+
+            EXTERNAL_FLIGHT_TAG = new Option<>(SettingType.STRING, "misc-settings.external-flight-tag", List.of(
+                    "A scoreboard tag that another plugin (such as a temporary fly plugin) puts on players while it controls their flight",
+                    "While a player has it, Origins does not change their flight, fly speed or gliding. Leave empty to turn this off"
+            ), "tempfly_active");
+            ORIGINS_FLIGHT_TAG = new Option<>(SettingType.STRING, "misc-settings.origins-flight-tag", List.of(
+                    "A scoreboard tag Origins puts on players who have the elytra flight ability, so other plugins can see that Origins controls their flight",
+                    "Leave empty to turn this off"
+            ), "origins_flight");
+
+            EQUIP_ANIMATION_ENABLED = new Option<>(SettingType.BOOLEAN, "equip-animation.enabled", "Show a title that types out the origin name when a player gets an origin", true);
+            EQUIP_ANIMATION_ON_SWAP = new Option<>(SettingType.BOOLEAN, "equip-animation.on-swap", "Play it automatically whenever a player gets an origin. Turn this off to only use /originselect <player> <origin>", true);
+            EQUIP_ANIMATION_SUBTITLE = new Option<>(SettingType.STRING, "equip-animation.subtitle", "The text under the origin name", "Origin Equipped");
+            EQUIP_ANIMATION_DEFAULT_COLOR = new Option<>(SettingType.STRING, "equip-animation.default-color", "The colour for origins that are not listed below (#rrggbb or a colour name)", "#10A0FF");
+            EQUIP_ANIMATION_COLORS = new Option<>(SettingType.MAP_STRING_TO_STRING, "equip-animation.colors", List.of(
+                    "The colour of each origin's name, written in lower case without spaces, dashes or underscores"
+            ), Map.ofEntries(
+                    Map.entry("human", "#74C7FF"), Map.entry("arachnid", "#B88973"), Map.entry("fox", "#FF9F73"),
+                    Map.entry("avian", "#FFE58A"), Map.entry("bee", "#FFE05A"), Map.entry("feline", "#FFB7D5"),
+                    Map.entry("slime", "#8DFF83"), Map.entry("shulk", "#D59BFF"), Map.entry("evoker", "#C69CFF"),
+                    Map.entry("witch", "#D58BFF"), Map.entry("enderian", "#B58CFF"), Map.entry("merling", "#72D9FF"),
+                    Map.entry("drowned", "#62BFFF"), Map.entry("elderguardian", "#7EE8D6"), Map.entry("snowgolem", "#D8F5FF"),
+                    Map.entry("strider", "#FF7868"), Map.entry("wolf", "#D7D7D7"), Map.entry("blazeborn", "#FF9A52"),
+                    Map.entry("elytrian", "#A9E6FF"), Map.entry("dwarf", "#D6B37A"), Map.entry("elf", "#B9FF8A"),
+                    Map.entry("guardian", "#78E0D1"), Map.entry("dragonborn", "#D080FF"), Map.entry("giant", "#FF7070")
+            ));
+
+            FIRST_JOIN_COMMAND = new Option<>(SettingType.STRING, "first-join.command", List.of(
+                    "A command the player runs the first time they join, for example one that opens an origin menu",
+                    "Leave empty to do nothing"
+            ), "");
+            FIRST_JOIN_DELAY = new Option<>(SettingType.INTEGER, "first-join.delay", "How many ticks after joining to run the command", 40);
 
             SWAP_COMMAND_ENABLED = new Option<>(SettingType.BOOLEAN, "swap-command.enabled", "Enable the swap command", true);
             SWAP_COMMAND_PERMISSION = new Option<>(SettingType.STRING, "swap-command.permission", "Permission required for origin swap command", "originsreborn.admin");
@@ -245,6 +290,8 @@ public class ConfigManager {
             makeOptionHeader("display", "Miscellaneous display options");
             makeOptionHeader("restrictions", List.of("Restrictions placed on origin selection", "These are designed for use with addon plugins that add many new origins", "If you run out of origins that fit the restrictions you may experience issues"));
             makeOptionHeader("geyser", "Settings for using GeyserMC");
+            makeOptionHeader("equip-animation", "The title shown when a player gets an origin");
+            makeOptionHeader("first-join", "Something to run the first time a player joins");
             makeOptionHeader("skinsrestorer-hook", "Enables abilities that change the player's skin (requires SkinsRestorer to work)");
 
             if (hasUpdated) saveConfig();

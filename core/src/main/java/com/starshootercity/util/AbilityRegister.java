@@ -280,7 +280,7 @@ public class AbilityRegister {
     public static void updateFlight(Player player, boolean inDisabledWorld) {
         GameMode gm = player.getGameMode();
         if (gm == GameMode.SPECTATOR) return;
-        if (gm == GameMode.CREATIVE || FlightToggleCommand.canFly(player)) {
+        if (gm == GameMode.CREATIVE || FlightToggleCommand.canFly(player) || FlightOwnership.ownedByOther(player)) {
             player.setFlySpeed(0.1f);
             return;
         }

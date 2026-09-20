@@ -49,6 +49,10 @@ commands:
     permission: originsreborn.default
     description: Modify origins
     usage: /<command>
+  originselect:
+    permission: originsreborn.admin
+    description: Play the origin equipped animation for a player
+    usage: /<command> <player> <origin>
   fly:
     permission: originsreborn.flight
     description: Toggle flight

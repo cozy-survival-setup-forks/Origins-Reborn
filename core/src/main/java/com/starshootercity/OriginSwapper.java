@@ -10,6 +10,8 @@ import com.starshootercity.commands.OriginCommand;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.geysermc.GeyserSwapper;
 import com.starshootercity.util.AbilityRegister;
+import com.starshootercity.util.EquipAnimation;
+import com.starshootercity.util.FlightOwnership;
 import com.starshootercity.util.Pair;
 import com.starshootercity.util.VaultHook;
 import com.starshootercity.util.config.ConfigManager;
@@ -437,8 +439,10 @@ public class OriginSwapper implements Listener {
         player.closeInventory();
         OriginsReborn.getMVE().setWorldBorderOverlay(player, false);
         player.setCooldown(Material.SHIELD, 0);
-        player.setAllowFlight(false);
-        player.setFlying(false);
+        if (!FlightOwnership.ownedByOther(player)) {
+            player.setAllowFlight(false);
+            player.setFlying(false);
+        }
         for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
             AbilityRegister.updateEntity(player, otherPlayer);
         }
@@ -574,9 +578,11 @@ public class OriginSwapper implements Listener {
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
         if (shouldDisallowSelection(player, lastSwapReasons.getOrDefault(player, PlayerSwapOriginEvent.SwapReason.INITIAL))) {
-            AbilityRegister.FlyData fd = AbilityRegister.flyData(player, true);
-            if (fd.canFly() != player.getAllowFlight()) player.setAllowFlight(fd.canFly());
-            if (fd.canFly() && fd.forceFly()) player.setFlying(true);
+            if (!FlightOwnership.ownedByOther(player)) {
+                AbilityRegister.FlyData fd = AbilityRegister.flyData(player, true);
+                if (fd.canFly() != player.getAllowFlight()) player.setAllowFlight(fd.canFly());
+                if (fd.canFly() && fd.forceFly()) player.setFlying(true);
+            }
             AbilityRegister.updateFlight(player, true);
             resetAttributes(player);
         }
@@ -593,9 +599,12 @@ public class OriginSwapper implements Listener {
                 continue;
             }
             if (!ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_FLIGHT_STUFF)) {
-                AbilityRegister.FlyData fd = AbilityRegister.flyData(player, false);
-                if (fd.canFly() != player.getAllowFlight()) player.setAllowFlight(fd.canFly());
-                if (fd.canFly() && fd.forceFly()) player.setFlying(true);
+                FlightOwnership.refreshTag(player);
+                if (!FlightOwnership.ownedByOther(player)) {
+                    AbilityRegister.FlyData fd = AbilityRegister.flyData(player, false);
+                    if (fd.canFly() != player.getAllowFlight()) player.setAllowFlight(fd.canFly());
+                    if (fd.canFly() && fd.forceFly()) player.setFlying(true);
+                }
                 AbilityRegister.updateFlight(player, false);
             }
             boolean invis = AbilityRegister.isInvisible(player, invisible.computeIfAbsent(player, p -> p.hasPotionEffect(PotionEffectType.INVISIBILITY)));
@@ -784,6 +793,7 @@ public class OriginSwapper implements Listener {
         resetPlayer(player, swapOriginEvent.isResetPlayer());
         executeCommands(player, swapOriginEvent.getNewOrigin());
         loadOrigins(player);
+        EquipAnimation.onSwap(player, swapOriginEvent.getNewOrigin().getName());
     }
 
     public static void executeCommands(Player player, Origin origin) {

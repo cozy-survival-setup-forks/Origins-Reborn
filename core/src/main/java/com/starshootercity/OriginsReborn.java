@@ -7,6 +7,7 @@ import com.starshootercity.abilities.types.ParticleAbility;
 import com.starshootercity.commands.DiscordCommand;
 import com.starshootercity.commands.FlightToggleCommand;
 import com.starshootercity.commands.OriginCommand;
+import com.starshootercity.commands.OriginSelectCommand;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import com.starshootercity.geysermc.OREventRegistrar;
@@ -95,6 +96,7 @@ public class OriginsReborn extends OriginsAddon {
 
     @Override
     public void onDisable() {
+        Bukkit.getOnlinePlayers().forEach(FlightOwnership::removeTag);
         if (!AbilityRegister.isSkinManagerEnabled()) return;
         SkinManager.unload();
     }
@@ -202,11 +204,20 @@ public class OriginsReborn extends OriginsAddon {
 
         Bukkit.getPluginManager().registerEvents(TriggerManager.getInstance(), this);
         Bukkit.getPluginManager().registerEvents(new OriginSwapper(), this);
+        Bukkit.getPluginManager().registerEvents(new FlightOwnership(), this);
+        Bukkit.getPluginManager().registerEvents(new FirstJoinCommand(), this);
         Bukkit.getPluginManager().registerEvents(new OrbOfOrigin(), this);
         Bukkit.getPluginManager().registerEvents(new PackApplier(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeftClickEvent.PlayerLeftClickEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new ParticleAbility.ParticleAbilityListener(), this);
         Bukkit.getPluginManager().registerEvents(new BreakSpeedModifierAbility.BreakSpeedModifierAbilityListener(), this);
+
+        PluginCommand selectCommand = retrieveCommand("originselect");
+        if (selectCommand != null) {
+            OriginSelectCommand select = new OriginSelectCommand();
+            selectCommand.setExecutor(select);
+            selectCommand.setTabCompleter(select);
+        }
 
         PluginCommand flightCommand = retrieveCommand("fly");
         if (flightCommand != null) flightCommand.setExecutor(new FlightToggleCommand());

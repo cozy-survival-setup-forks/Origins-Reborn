@@ -3,9 +3,11 @@ package com.starshootercity.abilities;
 import com.starshootercity.abilities.types.FlightAllowingAbility;
 import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.commands.FlightToggleCommand;
+import com.starshootercity.util.FlightOwnership;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,6 +39,7 @@ public class Elytra implements FlightAllowingAbility, Listener, VisibleAbility {
     @SuppressWarnings("deprecation")
     public void onEntityToggleGlide(EntityToggleGlideEvent event) {
         runForAbility(event.getEntity(), player -> {
+            if (FlightOwnership.ownedByOther(player)) return;
             if (!player.isOnGround() && !event.isGliding()) {
                 event.setCancelled(true);
             }
@@ -56,12 +59,16 @@ public class Elytra implements FlightAllowingAbility, Listener, VisibleAbility {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
         Player player = event.getPlayer();
-        if (FlightToggleCommand.canFly(player) || player.getScoreboardTags().contains("evervale_tempfly_active")) return;
+        if (FlightOwnership.ownedByOther(player) || FlightToggleCommand.canFly(player)) return;
+        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
         runForAbility(player, abilityPlayer -> {
-            if (event.isFlying()) {
-                event.setCancelled(true);
-                if (abilityPlayer.isGliding() && disableDisengage) return;
-                abilityPlayer.setGliding(!abilityPlayer.isGliding());
+            if (!event.isFlying()) return;
+            event.setCancelled(true);
+            if (abilityPlayer.isGliding()) {
+                if (!disableDisengage) abilityPlayer.setGliding(false);
+            } else if (!abilityPlayer.isOnGround()) {
+                // Only start gliding in the air, a double tap on the ground must not glide
+                abilityPlayer.setGliding(true);
             }
         });
     }

@@ -42,6 +42,7 @@ public class LikeWater implements FlightAllowingAbility, Listener, VisibleAbilit
         if (event.getPlayer().isFlying()) return;
         if (!event.getPlayer().isInWater()) return;
         runForAbility(event.getPlayer(), player -> {
+            if (com.starshootercity.util.FlightOwnership.ownedByOther(player)) return;
             boolean fly = (event.getTo().getY() > event.getFrom().getY()) && !player.isInBubbleColumn();
             player.setAllowFlight(fly);
             player.setFlying(fly);
@@ -61,6 +62,7 @@ public class LikeWater implements FlightAllowingAbility, Listener, VisibleAbilit
     @EventHandler
     public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
         runForAbility(event.getPlayer(), player -> {
+            if (com.starshootercity.util.FlightOwnership.ownedByOther(player)) return;
             if (player.isInWater()) event.setCancelled(true);
         });
     }
