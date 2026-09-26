@@ -60,6 +60,9 @@ There are now also options to prevent players from having the same origins, or t
 
 All options in the configuration are labelled and explained to make modifying the configuration easier.
 
+## PlaceholderAPI
+Each origin layer is a PlaceholderAPI expansion named after the layer. For the default layer, `%origin_name%` is the display name of the player's origin (empty when they have none). Whatever comes after the underscore is ignored, so `%origin_name%`, `%origin_current%` and so on all give the same. PlaceholderAPI only reads `%identifier_something%`, so a bare `%origin%` is never filled in, write `%origin_name%` instead. Other layers work the same with their own name, for example `%class_name%` for a layer called `class`.
+
 ## Included origins:
 - Human
   - Regular experience, no advantages or disadvantages
