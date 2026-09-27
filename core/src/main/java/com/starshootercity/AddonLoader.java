@@ -101,6 +101,7 @@ public class AddonLoader {
     public static void reloadAddons() {
         origins.clear();
         originNameMap.clear();
+        originFileNameMap.clear();
         originFiles.clear();
         for (OriginsAddon addon : registeredAddons) {
             loadOriginsFor(addon);
@@ -135,7 +136,12 @@ public class AddonLoader {
         List<File> addonFiles = new ArrayList<>();
         originFiles.put(addon.getNamespace(), addonFiles);
         File originFolder = new File(addon.getDataFolder(), "origins");
-        if (!originFolder.exists()) {
+        File[] existing = originFolder.listFiles();
+        boolean empty = existing == null || existing.length == 0;
+        if (!originFolder.exists() || empty) {
+            if (empty && originFolder.exists()) {
+                OriginsReborn.getInstance().getLogger().warning("%s's origins folder is empty, re-extracting its bundled origins.".formatted(addon.getNamespace()));
+            }
             boolean ignored = originFolder.mkdirs();
             try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(addon.getFile()))) {
                 ZipEntry entry = inputStream.getNextEntry();
@@ -290,7 +296,11 @@ public class AddonLoader {
         String actualName = origin.getName().toLowerCase();
         Origin previouslyRegisteredOrigin = originNameMap.get(name.replace("_", " "));
         if (previouslyRegisteredOrigin != null) {
-            if (previouslyRegisteredOrigin.getPriority() > origin.getPriority()) {
+            boolean keepOld = previouslyRegisteredOrigin.getPriority() > origin.getPriority();
+            OriginsReborn.getInstance().getLogger().warning("Two addons both have an origin file named \"%s.json\": %s and %s. Using the one from %s (higher priority wins). Rename one of the files if you want both.".formatted(
+                    name, previouslyRegisteredOrigin.getAddon().getNamespace(), addon.getNamespace(),
+                    keepOld ? previouslyRegisteredOrigin.getAddon().getNamespace() : addon.getNamespace()));
+            if (keepOld) {
                 return;
             } else {
                 origins.remove(previouslyRegisteredOrigin);

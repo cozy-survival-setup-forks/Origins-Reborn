@@ -173,8 +173,12 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 Origin origin = AddonLoader.getOrigin(args[3].replace("_", " "));
-                if (origin == null || !origin.getLayer().equals(layer)) {
-                    sender.sendMessage(Component.text("Invalid command. Usage: /origin set <player> <layer> <origin>").color(NamedTextColor.RED));
+                if (origin == null) {
+                    sender.sendMessage(Component.text("Unknown origin \"%s\". It must be the origin's file name (without .json), for example \"elder_guardian\", not its display name.".formatted(args[3])).color(NamedTextColor.RED));
+                    return true;
+                }
+                if (!origin.getLayer().equals(layer)) {
+                    sender.sendMessage(Component.text("\"%s\" is on layer \"%s\", not \"%s\". Use /origin set %s %s %s".formatted(args[3], origin.getLayer(), layer, args[1], origin.getLayer(), args[3])).color(NamedTextColor.RED));
                     return true;
                 }
                 OriginSwapper.setOrigin(player, origin, PlayerSwapOriginEvent.SwapReason.COMMAND, false, layer);

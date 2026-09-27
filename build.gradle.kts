@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.starshootercity"
-version = "2.10.10-cozy.3"
+version = "2.10.10-cozy.4"
 
 repositories {
     mavenCentral()
